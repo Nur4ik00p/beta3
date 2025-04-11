@@ -290,60 +290,7 @@ const ProfileEdit = () => {
             {/* Визуальные настройки */}
             <Grid item xs={12} md={6}>
               {/* Тема */}
-              <Box sx={{ mb: 4 }}>
-                <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
-                  Тема профиля
-                </Typography>
-                <FormControl fullWidth margin="normal" size="small">
-                  <InputLabel>Выберите тему</InputLabel>
-                  <Select
-                    name="theme"
-                    value={formData.theme}
-                    onChange={handleChange}
-                    label="Выберите тему"
-                    variant="outlined"
-                  >
-                    <MenuItem value="light">Светлая</MenuItem>
-                    <MenuItem value="dark">Темная</MenuItem>
-                    <MenuItem value="blue">Синяя</MenuItem>
-                    <MenuItem value="green">Зеленая</MenuItem>
-                    <MenuItem value="purple">Фиолетовая</MenuItem>
-                  </Select>
-                </FormControl>
-
-                <Box sx={{ mt: 2, p: 2, borderRadius: 1, bgcolor: themePreviewStyles[formData.theme].bg }}>
-                  <Typography variant="body2" sx={{ 
-                    color: themePreviewStyles[formData.theme].text,
-                    fontWeight: 600,
-                    mb: 1
-                  }}>
-                    Предпросмотр темы
-                  </Typography>
-                  <Box sx={{ 
-                    p: 2, 
-                    borderRadius: 1,
-                    border: '1px solid',
-                    borderColor: themePreviewStyles[formData.theme].primary,
-                    color: themePreviewStyles[formData.theme].text
-                  }}>
-                    <Typography variant="body2">Это пример текста в выбранной теме</Typography>
-                    <Button 
-                      variant="contained" 
-                      size="small" 
-                      sx={{ 
-                        mt: 1,
-                        bgcolor: themePreviewStyles[formData.theme].primary,
-                        '&:hover': {
-                          bgcolor: themePreviewStyles[formData.theme].primary,
-                          opacity: 0.9
-                        }
-                      }}
-                    >
-                      Пример кнопки
-                    </Button>
-                  </Box>
-                </Box>
-              </Box>
+              
 
               {/* Аватар */}
               <Box sx={{ mb: 4 }}>
