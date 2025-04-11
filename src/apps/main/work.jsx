@@ -27,7 +27,7 @@ const Work = () => {
   const [openModal, setOpenModal] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
   useEffect(() => {
-    setModalMessage('Это бета тест 2 до вторика ');
+    setModalMessage('Это бета тест 2 до вторника ');
     setOpenModal(true);
   }, []); 
 
