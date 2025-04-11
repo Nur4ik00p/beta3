@@ -1,4 +1,4 @@
-/* AtomGlide -- DK Stduio Product -- Author Dmitry Khorov ( git DKhorov tg @jpegweb */
+/* AtomGlide -- DK Studio Product -- Author Dmitry Khorov (git DKhorov tg @jpegweb) */
 
 .work-panel {
   height: 100vh;
@@ -40,14 +40,15 @@
   border-radius: 10px;
   padding: 10px;
   box-sizing: border-box;
-  transition: min-height 0.3s ease;
+  transition: all 0.3s ease;
   
   &.expanded {
     min-height: 300px;
+    height: auto;
     
     @media (max-width: 768px) {
       min-height: 280px;
-      width: 20%;
+      width: 100%;
     }
   }
 }
@@ -61,8 +62,11 @@
   margin-top: 10px;
 }
 
-.post-textarea{
+.post-textarea {
   margin-right: 30px;
+  min-height: 150px;
+  resize: vertical;
+  transition: height 0.3s ease;
 }
 
 .post-title-input,
@@ -80,12 +84,14 @@
   outline: none;
   transition: all 0.3s ease;
 
-
+  &:focus {
+    border-color: #4a96f3;
+    box-shadow: 0 0 0 2px rgba(74, 150, 243, 0.2);
+  }
 }
 
-.post-textarea {
-  min-height: 100px;
-  resize: vertical;
+.tags-input {
+  margin-bottom: 15px;
 }
 
 .tab-s {
@@ -193,7 +199,6 @@
   z-index: 0;
 }
 
-/* Стили для загрузки изображений */
 .image-upload {
   width: calc(100% - 90px);
   margin: 10px 20px;
@@ -209,6 +214,7 @@
   align-items: center;
   justify-content: center;
   background-color: rgba(26, 26, 26, 0.3);
+  margin-bottom: 15px;
 
   &:hover {
     border-color: #4a96f3;
@@ -274,7 +280,6 @@
   }
 }
 
-/* Стили для Pinterest-грида */
 .pinterest-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -339,7 +344,6 @@
   }
 }
 
-/* Остальные стили остаются без изменений */
 .panel-ch {
   height: 100%;
   width: 60%;
@@ -359,7 +363,7 @@
   display: flex;
   align-items: center;
   flex-direction: column;
-  justify-content: flex-start; // Изменено с center на flex-start
+  justify-content: flex-start;
   padding: 15px;
   box-sizing: border-box;
 
@@ -439,7 +443,6 @@
   animation: gradientFlow 4s ease infinite;
   border: 1px solid #31373F;
   width: calc(100% - 40px);
-
   border-radius: 10px;
   margin-top: 10px;
   padding: 20px;
@@ -540,13 +543,11 @@
 .poster-w {
   width: 130px;
   height: 130px;
-
 }
 
 .poster-s {
   width: 130px;
   height: 130px;
-
 }
 
 .upload-button {
@@ -651,7 +652,6 @@
   animation: fadeInRight 0.5s ease-out forwards;
 }
 
-/* Новые стили для раздела News */
 .news-container {
   padding: 20px;
   background-color: #0D1116;
@@ -745,145 +745,6 @@
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
-
-@media (max-width: 1200px) {
-  .pinterest-grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  }
-  
-  .panel-ch {
-    width: 50%;
-  }
-}
-
-@media (max-width: 768px) {
-  .work-panel {
-    flex-direction: column;
-  }
-  
-  .panel-created {
-    width: 100%;
-    margin-left: 0;
-    margin-right: 0;
-  }
-  
-  .panel-ch {
-    width: 100%;
-    margin: 20px 0;
-    position: static;
-  }
-  
-  .post-title-input,
-  .post-textarea,
-  .tags-input {
-    width: 85%;
-  }
-  
-  .pinterest-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  }
-  
-  .load-text {
-    font-size: 18px;
-  }
-  
-  .load-text2 {
-    font-size: 14px;
-  }
-  
-  .poster, .poster-w, .poster-s {
-    width: 100px;
-    height: 100px;
-  }
-
-  /* Адаптив для News */
-  .news-title {
-    font-size: 18px;
-  }
-  
-  .update-item {
-    padding: 10px;
-  }
-  
-  .update-text {
-    font-size: 13px;
-  }
-}
-
-@media (max-width: 480px) {
-  .poster, .poster-w, .poster-s {
-    width: 80px;
-    height: 80px;
-  }
-  
-  .icon-buttons {
-    gap: 10px;
-    margin-left: 10px;
-  }
-  
-  .auth-button {
-    margin-left: 0;
-    padding: 10px 15px;
-    font-size: 14px;
-  }
-  
-  .K-LOP {
-    font-size: 22px;
-  }
-  
-  .YHN {
-    font-size: 18px;
-    margin-left: 15px;
-  }
-
-  /* Адаптив для News */
-  .news-container {
-    padding: 15px;
-  }
-  
-  .news-title {
-    font-size: 16px;
-  }
-  
-  .update-date {
-    font-size: 11px;
-  }
-  
-  .update-text {
-    font-size: 12px;
-  }
-}
-
-
-@media (max-width: 480px) {
-  .ch1{
-    display: none;
-
-  }
-  .ch2{
-    display: none;
-
-  }
-  .menu{
-    display: none;
-
-
-  }
-  .DS1 {
-    margin-left: 10px;
-    width: 95%;
-    margin-bottom: 0;
-
-  }
-  
-  .DS2 {
-    margin-left: 10px;
-    width: 95%;
-  }
-  
-  
-}
-
 
 .markdown-editor {
   width: 100%;
@@ -993,9 +854,123 @@
   }
 }
 
+@media (max-width: 1200px) {
+  .pinterest-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+  
+  .panel-ch {
+    width: 50%;
+  }
+}
 
+@media (max-width: 768px) {
+  .work-panel {
+    flex-direction: column;
+  }
+  
+  .panel-created {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  
+  .panel-ch {
+    width: 100%;
+    margin: 20px 0;
+    position: static;
+  }
+  
+  .post-title-input,
+  .post-textarea,
+  .tags-input {
+    width: 85%;
+  }
+  
+  .pinterest-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+  
+  .load-text {
+    font-size: 18px;
+  }
+  
+  .load-text2 {
+    font-size: 14px;
+  }
+  
+  .poster, .poster-w, .poster-s {
+    width: 100px;
+    height: 100px;
+  }
 
+  .news-title {
+    font-size: 18px;
+  }
+  
+  .update-item {
+    padding: 10px;
+  }
+  
+  .update-text {
+    font-size: 13px;
+  }
+}
 
+@media (max-width: 480px) {
+  .poster, .poster-w, .poster-s {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .icon-buttons {
+    gap: 10px;
+    margin-left: 10px;
+  }
+  
+  .auth-button {
+    margin-left: 0;
+    padding: 10px 15px;
+    font-size: 14px;
+  }
+  
+  .K-LOP {
+    font-size: 22px;
+  }
+  
+  .YHN {
+    font-size: 18px;
+    margin-left: 15px;
+  }
 
+  .news-container {
+    padding: 15px;
+  }
+  
+  .news-title {
+    font-size: 16px;
+  }
+  
+  .update-date {
+    font-size: 11px;
+  }
+  
+  .update-text {
+    font-size: 12px;
+  }
 
+  .ch1, .ch2, .menu {
+    display: none;
+  }
 
+  .DS1 {
+    margin-left: 10px;
+    width: 95%;
+    margin-bottom: 0;
+  }
+  
+  .DS2 {
+    margin-left: 10px;
+    width: 95%;
+  }
+}
