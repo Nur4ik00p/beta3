@@ -19,6 +19,7 @@ import ImageIcon from '@mui/icons-material/Image';
 import FormatQuote from '@mui/icons-material/FormatQuote';
 import FormatHeader1 from '@mui/icons-material/LooksOne';
 import FormatHeader2 from '@mui/icons-material/LooksTwo';
+import { Box, CircularProgress, Typography } from "@mui/material";
 
 import { Post } from '../post/post';
 import '../../style/work/work.scss';
@@ -27,7 +28,7 @@ const Work = () => {
   const [openModal, setOpenModal] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
   useEffect(() => {
-    setModalMessage('Это бета тест 2 до вторника ');
+    setModalMessage('Это бета тест 2 до вторика ');
     setOpenModal(true);
   }, []); 
 
@@ -270,20 +271,7 @@ const Work = () => {
 
   return (
     <div className="work-panel">
-      {openModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h3>Внимание</h3>
-            <p>{modalMessage}</p>
-            <button 
-              className="modal-close-button"
-              onClick={() => setOpenModal(false)}
-            >
-              Понятно
-            </button>
-          </div>
-        </div>
-      )}
+
 
       {userData ? (
         <div className='panel-created'>
@@ -457,12 +445,34 @@ const Work = () => {
 
             {isPostsLoading ? (
               <>
-                <div className={`load-text animate-fade-in ${isMounted ? 'delay-3' : ''}`}>
-                  Загрузка...
-                </div>
-                <div className={`load-text2 animate-fade-in ${isMounted ? 'delay-4' : ''}`}>
-                  Если загрузка долгая то прочти <span className='JK'>доку</span> при такой загрузке
-                </div>
+                           <Box
+     sx={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100vw",
+      height: "100vh",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+      backdropFilter: "blur(8px)",
+      backgroundColor: "rgba(34, 34, 73, 0.2)",
+      zIndex: 9999,
+    }}
+  >
+    <CircularProgress
+      size={60}
+      thickness={4}
+      sx={{
+        color: "white",
+        marginBottom: "20px",
+      }}
+    />
+    <Typography variant="h6" sx={{ color: "white", marginBottom: "10px" }}>
+      AtomGlide
+    </Typography>
+    </Box>
               </>
             ) : activeTab === 'photo' ? (
               <div className="pinterest-grid">
@@ -568,12 +578,7 @@ const Work = () => {
                 ))
             ) : (
               <>
-                <div className={`load-text animate-fade-in ${isMounted ? 'delay-3' : ''}`}>
-                  :( Нет статей для отображения
-                </div>
-                <div className={`load-text2 animate-fade-in ${isMounted ? 'delay-4' : ''}`}>
-                  Узнать в чем проблема можно узнать в <span className='JK'>доке</span>
-                </div>
+    
               </>
             )}
           </div>
@@ -581,13 +586,7 @@ const Work = () => {
       ) : (
         <div className='panel-created'>
           <div className="posts-container">
-            <div className={`DS1 animate-fade-in ${isMounted ? 'delay-1' : ''}`}>
-              <h1 className='YHN'>Привет Бро, Нужно создать пост? </h1>
-
-              <Link to="/register" className="auth-button">
-                Войти или Зарегистрироваться
-              </Link>
-            </div>
+         
             
             <div className={`DS2 animate-fade-in ${isMounted ? 'delay-2' : ''}`}>
               <div className="tab-slider">
@@ -625,12 +624,35 @@ const Work = () => {
 
             {isPostsLoading ? (
               <>
-                <div className={`load-text animate-fade-in ${isMounted ? 'delay-3' : ''}`}>
-                  Загрузка...
-                </div>
-                <div className={`load-text2 animate-fade-in ${isMounted ? 'delay-4' : ''}`}>
-                  Если загрузка долгая то прочти <span className='JK'>доку</span> при такой загрузке
-                </div>
+                          <Box
+      sx={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        backdropFilter: "blur(8px)",
+        backgroundColor: "rgba(34, 34, 73, 0.2)",
+        zIndex: 9999,
+      }}
+    >
+      <CircularProgress
+        size={60}
+        thickness={4}
+        sx={{
+          color: "white",
+          marginBottom: "20px",
+        }}
+      />
+      <Typography variant="h6" sx={{ color: "white", marginBottom: "10px" }}>
+        AtomGlide
+      </Typography>
+
+    </Box>
               </>
             ) : activeTab === 'photo' ? (
               <div className="pinterest-grid">
@@ -670,13 +692,10 @@ const Work = () => {
                 <h2 className="news-title">Последние обновления</h2>
                 <div className="news-updates">
                   <div className="update-item">
-                    <span className="update-date">01.04.2023</span>
-                    <p className="update-text">Добавлена возможность загружать изображения в посты</p>
+                    <span className="update-date">11.04.2025</span>
+                    <p className="update-text">Бета тест 3 </p>
                   </div>
-                  <div className="update-item">
-                    <span className="update-date">15.03.2023</span>
-                    <p className="update-text">Улучшена система тегов для постов</p>
-                  </div>
+
                 </div>
 
                 <h2 className="news-title">Важные объявления</h2>
@@ -733,12 +752,34 @@ const Work = () => {
                 ))
             ) : (
               <>
-                <div className={`load-text animate-fade-in ${isMounted ? 'delay-3' : ''}`}>
-                  :( Нет статей для отображения
-                </div>
-                <div className={`load-text2 animate-fade-in ${isMounted ? 'delay-4' : ''}`}>
-                  Узнать в чем проблема можно узнать в <span className='JK'>доке</span>
-                </div>
+                           <Box
+      sx={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        backdropFilter: "blur(8px)",
+        backgroundColor: "rgba(34, 34, 73, 0.2)",
+        zIndex: 9999,
+      }}
+    >
+      <CircularProgress
+        size={60}
+        thickness={4}
+        sx={{
+          color: "white",
+          marginBottom: "20px",
+        }}
+      />
+      <Typography variant="h6" sx={{ color: "white", marginBottom: "10px" }}>
+        AtomGlide
+      </Typography>
+    </Box>
               </>
             )}
           </div>
