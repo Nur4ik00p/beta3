@@ -182,14 +182,14 @@ export const Mobile = () => {
                     <UserInfo 
                       {...post.user} 
                       additionalText={new Date(post.createdAt).toLocaleDateString()}
-                      avatarUrl={post.user?.avatarUrl ? `http://localhost:4001${post.user.avatarUrl}` : ''}
+                      avatarUrl={post.user?.avatarUrl ? `https://atomglidedev.ru${post.user.avatarUrl}` : ''}
                     />
                     
                     <h3 style={{ color: '#f0f6fc', margin: '10px 0' }}>{post.title}</h3>
                     
                     {post.imageUrl && (
                       <img 
-                        src={`http://localhost:4001${post.imageUrl}`} 
+                        src={`https://atomglidedev.ru${post.imageUrl}`} 
                         alt={post.title}
                         style={{
                           width: '100%',
