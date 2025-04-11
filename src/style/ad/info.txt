@@ -1,0 +1,5 @@
+---------- AtomGlide ----------
+- src: /src/style/ad          -
+- F: 0  Fi:1 ad.css           -
+- ID Number: 1200 (Read Dock!)-
+-------------------------------

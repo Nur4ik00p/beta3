@@ -1,0 +1,5 @@
+---------- AtomGlide ----------
+- src: /src/style/chat        -
+- F: 17  Fi:2   chat.css      -
+- ID Number: 1200 (Read Dock!)-
+-------------------------------

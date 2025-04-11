@@ -1,0 +1,5 @@
+---------- AtomGlide ----------
+- src: /src/style/about       -
+- F: 0  Fi:1 about.css        -
+- ID Number: 1200 (Read Dock!)-
+-------------------------------

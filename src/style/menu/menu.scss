@@ -1,0 +1,210 @@
+/* AtomGlide -- DK Stduio Product -- Author Dmitry Khorov ( git DKhorov tg @jpegweb */
+
+.menu {
+  width: 300px;
+  height: 300px !important;
+  background-color: #0D1116;
+  border: solid 1px #31373F;
+  margin-left: 30px;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  border-radius: 10px;
+  margin-top: 20px;
+  transition: all 0.3s ease;
+
+  @media (max-width: 480px) {
+      display: none;
+  }
+}
+
+@font-face {
+  font-family: 'SF Pro Text';
+  src: url('../font/SFProText-Bold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.JKL {
+  padding-top: 5px;
+}
+
+.menu-profile {
+  width: 300px;
+  height: 100px !important;
+  background-color: #0D1116;
+  border: solid 1px #31373F;
+  margin-top: 70px;
+  margin-left: 30px;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+
+  @media (max-width: 480px) {
+      display: none;
+  }
+}
+
+.pro-avtr-o {
+  margin-left: 20px;
+}
+
+.menu-item {
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 10px;
+  background-color: #12151b;
+  border-radius: 5px;
+  padding: 10px 15px;
+  transition: 0.2s;
+  
+  a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.3s ease;
+  }
+}
+
+.menu-icon {
+  font-size: 20px;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.menu-ad {
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  margin-top: 30px;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 30px;
+  height:110px;
+  -webkit-box-shadow: 0px 1px 8px 6px rgba(255, 255, 255, 0.2);
+  -moz-box-shadow: 0px 1px 8px 6px rgba(255, 255, 255, 0.2);
+  box-shadow: 0px 1px 8px 6px rgba(255, 255, 255, 0.2);
+  background: rgb(11,11,11);
+  background: -moz-linear-gradient(141deg, rgba(11,11,11,1) 38%, rgba(93,93,93,1) 100%);
+  background: -webkit-linear-gradient(141deg, rgba(11,11,11,1) 38%, rgba(93,93,93,1) 100%);
+  background: linear-gradient(141deg, rgba(11,11,11,1) 38%, rgba(93,93,93,1) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#0b0b0b",endColorstr="#5d5d5d",GradientType=1);
+  border-radius: 5px;
+
+  @media (max-width: 480px) {
+      display: none;
+  }
+}
+
+a {
+  color: white;
+  font-family: "JetBrains Mono", monospace;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  text-decoration: none;
+}
+
+.menu-item:hover {
+  background-color: #333232;
+}
+
+.menu-item2:hover {
+  background-color: #28699f;
+  color: white;
+}
+
+.name-pre {
+  color: white;
+  font-family: 'SF Pro Text';
+  margin-left: 30px;
+  width: 200px;
+  font-size: 23px;
+  font-weight: 200;
+  transition: all 0.3s ease;
+}
+
+.ad-text {
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+  padding-top: 10px;
+  margin-left: 18px;
+  width: 200px;
+  font-size: 23px;
+  font-weight: 200;
+}
+
+// Стили для модального окна
+.MuiModal-root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(3px);
+}
+
+// Анимация при наведении на посты в модальном окне
+[style*="gridTemplateColumns"] > div {
+  transition: transform 0.2s ease;
+  
+  &:hover {
+      transform: translateY(-5px);
+  }
+}
+
+.TV {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  @media (max-width: 480px) {
+      display: none;
+  }
+}
+
+// Анимации для модального окна
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+// Стили для постов в модальном окне
+.post-ad {
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+}
+
+@media (max-width: 480px) {
+  .menu-profile {
+      display: none;
+  }
+  
+  .TV {
+      display: none;
+  }
+  
+  .menu {
+      display: none;
+  }
+  
+  .menu-ad {
+      display: none;
+  }
+}

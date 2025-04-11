@@ -1,0 +1,102 @@
+/* AtomGlide -- DK Stduio Product -- Author Dmitry Khorov ( git DKhorov tg @jpegweb */
+
+.panel {
+    width: 100%;
+    height: 50px;
+    background-color: rgba(24, 23, 23, 0.6);
+    border-bottom: 0.5px solid rgb(62, 62, 62);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    margin-top: 50px;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+}
+
+.panel-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.panel-text {
+    color: white;
+    font-family: "JetBrains Mono", monospace;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 23px;
+    text-align: center;
+    position: relative; /* Для позиционирования уведомления */
+}
+
+/* Стили для текста и анимаций */
+.header-text {
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.saved-notification {
+    position: absolute;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: #4CAF50;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 23px;
+}
+
+/* Анимации */
+.fade-in {
+    animation: fadeIn 0.3s ease-in forwards;
+}
+
+.fade-out {
+    animation: fadeOut 0.3s ease-out forwards;
+}
+
+.slide-up {
+    animation: slideUp 0.3s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from { 
+        opacity: 0;
+        transform: translateY(5px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    from { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to { 
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+}
+
+@keyframes slideUp {
+    from { 
+        transform: translateY(10px);
+        opacity: 0;
+    }
+    to { 
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Дополнительные эффекты при наведении */
+.panel-text:hover .header-text {
+    opacity: 0.8;
+    transform: scale(0.98);
+}

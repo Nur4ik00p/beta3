@@ -1,0 +1,129 @@
+/* AtomGlide -- DK Stduio Product -- Author Dmitry Khorov ( git DKhorov tg @jpegweb */
+
+
+
+
+.about-panel {
+        height: 400px ;/* Учитываем отступ сверху */
+        background-color: #181717;
+        border: 1.5px solid black;
+        width: 780px;
+        border-radius: 5px;
+        margin-right: 30px;
+        margin-left: 30px;
+    }
+    
+::-webkit-scrollbar{
+    background-color: #181717;
+}
+    
+.center{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.about-center{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}   
+
+.container-about{
+    display: flex;
+}
+
+.about{
+    width: 400px;
+}
+
+.test{
+    border-radius: 100px;
+}
+
+.avatar-container{
+     padding: 50px;
+}   
+.back{
+    width: 250px;
+    height: auto;
+    background-color: rgb(31, 31, 31);
+    margin-top: 50px;
+    border-radius: 100px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+}
+
+.tag{
+    color: rgb(137, 0, 241);
+    font-family: "JetBrains Mono", monospace;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+
+}
+
+.info{
+    margin-top: 60px;
+}
+
+.name{
+    color: white;
+    font-family: "JetBrains Mono", monospace;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    margin-bottom: 0;
+}
+
+.mail{
+    color: rgb(139, 138, 138);
+    font-family: "JetBrains Mono", monospace;
+    font-optical-sizing: auto;
+    font-weight: 300;
+    font-style: normal;
+    margin-top: 5px;
+}
+.imga{
+    width: 150px;
+    height: 150px;
+    border-radius: 100px;
+    margin-left: 50px;
+    margin-top: 10px;
+}
+
+.about{
+    color: white;
+    font-family: "JetBrains Mono", monospace;
+    font-optical-sizing: auto;
+    font-weight: 200;
+    font-style: normal;
+    margin-top: 20px;
+}
+
+.id-user{
+    color: rgb(139, 138, 138);
+    font-family: "JetBrains Mono", monospace;
+    font-optical-sizing: auto;
+    font-weight: 100;
+    font-style: normal;
+    margin-top: 5px;
+}
+    
+
+.ad{
+    color: rgb(36, 36, 36);
+    font-family: "JetBrains Mono", monospace;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 1.5vw;
+    margin-left: 20px;
+    position: fixed;
+    bottom: 0;
+    margin-bottom: 20px;
+}

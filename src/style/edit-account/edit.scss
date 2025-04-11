@@ -1,0 +1,13 @@
+/* AtomGlide -- DK Stduio Product -- Author Dmitry Khorov ( git DKhorov tg @jpegweb */
+
+.Q-IOP{
+    overflow-y: scroll;
+}
+
+.flex-container {
+    pointer-events: all;
+    display: flex;
+    justify-content: space-between; /* Adjusts spacing between items */
+    align-items: flex-start; /* Aligns items at the start of the container */
+    gap: 20px; /* Adds space between the components */
+  }
