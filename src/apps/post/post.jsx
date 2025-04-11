@@ -47,8 +47,7 @@ export const Post = ({
   });
   const [favorite, setFavorite] = React.useState(isFavorite);
   const [isReacting, setIsReacting] = React.useState(false);
-  const [imageLoaded, setImageLoaded] = React.useState(false);
-  const [imageError, setImageError] = React.useState(false);
+  const [imageStatus, setImageStatus] = React.useState('loading'); // 'loading', 'loaded', 'error'
 
   React.useEffect(() => {
     setReactionData({
@@ -57,9 +56,29 @@ export const Post = ({
       userReaction
     });
     setFavorite(isFavorite);
-    setImageLoaded(false);
-    setImageError(false);
+    setImageStatus(imageUrl ? 'loading' : 'error');
   }, [likesCount, dislikesCount, userReaction, imageUrl, isFavorite]);
+
+  const processImageUrl = (url) => {
+    if (!url) return null;
+    
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    
+    const baseUrl = 'https://atomglidedev.ru';
+    return `${baseUrl}${url.startsWith('/') ? url : `/${url}`}`;
+  };
+
+  const fullImageUrl = processImageUrl(imageUrl);
+
+  const handleImageLoad = () => {
+    setImageStatus('loaded');
+  };
+
+  const handleImageError = () => {
+    setImageStatus('error');
+  };
 
   const onClickRemove = async (e) => {
     e.stopPropagation();
@@ -196,23 +215,6 @@ export const Post = ({
     }
   };
 
-  const getFullImageUrl = (url) => {
-    if (!url) return null;
-    return url.startsWith('https') ? url : `https://atomglidedev.ru${url}`;
-  };
-
-  const fullImageUrl = getFullImageUrl(imageUrl);
-
-  const handleImageLoad = () => {
-    setImageLoaded(true);
-    setImageError(false);
-  };
-
-  const handleImageError = () => {
-    setImageError(true);
-    setImageLoaded(false);
-  };
-
   const renderTags = () => {
     if (!Array.isArray(tags) || tags.length === 0) {
       return null;
@@ -250,13 +252,13 @@ export const Post = ({
           <UserInfo 
             {...user} 
             additionalText={createdAt}
-            avatarUrl={user?.avatarUrl ? getFullImageUrl(user.avatarUrl) : ''}
+            avatarUrl={user?.avatarUrl ? processImageUrl(user.avatarUrl) : ''}
           />
         </div>
         
-        {fullImageUrl && !imageError && (
+        {fullImageUrl && imageStatus !== 'error' && (
           <div className="J_HJKe">
-            {!imageLoaded && (
+            {imageStatus === 'loading' && (
               <div className="image-loading-placeholder">
                 Загрузка изображения...
               </div>
@@ -265,7 +267,7 @@ export const Post = ({
               className="blurred-background"
               style={{ 
                 backgroundImage: `url(${fullImageUrl})`,
-                display: imageLoaded ? 'block' : 'none'
+                display: imageStatus === 'loaded' ? 'block' : 'none'
               }}
             />
             <img
@@ -274,14 +276,14 @@ export const Post = ({
               alt={title}
               onLoad={handleImageLoad}
               onError={handleImageError}
-              style={{ display: imageLoaded ? 'block' : 'none' }}
+              style={{ display: imageStatus === 'loaded' ? 'block' : 'none' }}
+              loading="lazy"
             />         
           </div>
         )}
 
-        {imageError && (
+        {imageStatus === 'error' && (
           <div className="image-error-placeholder">
-            Не удалось загрузить изображение
           </div>
         )}
 
