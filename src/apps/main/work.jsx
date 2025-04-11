@@ -796,7 +796,7 @@ const Work = () => {
                 <div 
                   key={user._id} 
                   className="following-user"
-                  onClick={() => navigate(user.profileUrl || `/users/${user._id}`)}
+                  onClick={() => navigate(user.profileUrl || `/account/profile/${user._id}`)}
                 >
                   <img 
                     src={user.avatarUrl ? `https://atomglidedev.ru${user.avatarUrl}` : '/default-avatar.png'} 
