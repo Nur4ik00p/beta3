@@ -25,7 +25,7 @@ import {
   BsBook,
   BsList,
   BsSearch,
-  BsUbuntu,
+  BsChat,
   BsConeStriped,
   BsCollectionPlayFill,
   BsCodeSlash,
@@ -123,6 +123,8 @@ export const Mobile = () => {
       </Link>
       <BsFillHeartFill className="menu-icon-z" onClick={handleOpenFavorites} />
       <Link to="/mini-apps"><BsCommand className="menu-icon-z" /></Link>
+      <Link to="/chat"><BsChat className="menu-icon-z" /></Link>
+
 
       <StyledModal
         open={openFavoritesModal}
