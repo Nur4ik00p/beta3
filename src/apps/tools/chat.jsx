@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
-import { Input, Button, List, Avatar, Badge, Modal, Row, Col, Divider } from 'antd';
-import { SendOutlined, UserOutlined, SmileOutlined, WifiOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import './Chat.css';
 
@@ -131,62 +129,79 @@ const Chat = () => {
     }
   };
 
+  const getStatusText = () => {
+    switch(connectionStatus) {
+      case 'connected': return 'онлайн';
+      case 'connecting': return 'подключение...';
+      case 'error': return 'ошибка подключения';
+      default: return 'офлайн';
+    }
+  };
+
+  const UserAvatar = ({ color }) => {
+    return (
+      <div className="user-avatar" style={{ backgroundColor: color }}>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="#fff">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
+        </svg>
+      </div>
+    );
+  };
+
   return (
     <div className="chat-app">
       {/* Модальное окно подключения */}
-      <Modal
-        title="Подключение к чату"
-        visible={isModalVisible}
-        closable={false}
-        footer={null}
-      >
-        <div className="connection-form">
-          <Input
-            placeholder="Введите ваше имя"
-            onChange={(e) => setUserName(e.target.value)}
-            style={{ marginBottom: 16 }}
-          />
-          <Button 
-            type="primary" 
-            onClick={() => handleUserRegistration(
-              userName || 'Аноним', 
-              `#${Math.floor(Math.random()*16777215).toString(16)}`
-            )}
-          >
-            Подключиться
-          </Button>
+      {isModalVisible && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <div className="modal-header">
+              <h3>Подключение к чату</h3>
+            </div>
+            <div className="modal-body">
+              <div className="connection-form">
+                <input
+                  type="text"
+                  placeholder="Введите ваше имя"
+                  onChange={(e) => setUserName(e.target.value)}
+                  className="name-input"
+                />
+                <button 
+                  className="connect-button"
+                  onClick={() => handleUserRegistration(
+                    userName || 'Аноним', 
+                    `#${Math.floor(Math.random()*16777215).toString(16)}`
+                  )}
+                >
+                  Подключиться
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-      </Modal>
+      )}
 
       {/* Шапка чата */}
       <header className="chat-header">
         <div className="header-content">
           <div className="chat-title">
             <span>Чат сообщества</span>
-            <Badge 
-              color={getStatusColor()} 
-              text={connectionStatus === 'connected' ? 'онлайн' : 'офлайн'}
-              style={{ marginLeft: 10 }}
-            />
+            <span className="connection-status" style={{ color: getStatusColor() }}>
+              {getStatusText()}
+            </span>
           </div>
-      
         </div>
       </header>
 
       {/* Основное содержимое чата */}
       <main className="chat-main">
-        <List
-          dataSource={messages}
-          renderItem={(item) => (
-            <List.Item className={`message-item ${item.isSticker ? 'sticker-message' : ''}`}>
+        <div className="messages-list">
+          {messages.map((item, index) => (
+            <div key={index} className={`message-item ${item.isSticker ? 'sticker-message' : ''}`}>
               <div className="message-content">
-                <Avatar 
-                  style={{ backgroundColor: item.avatarColor }} 
-                  icon={<UserOutlined />}
-                />
+                <UserAvatar color={item.avatarColor} />
                 <div className="message-text">
                   <div className="message-meta">
-                    <span className="message-user">{item.user}</span>
+                    <span className="message-user">{item.userName}</span>
                     <span className="message-time">
                       {new Date(item.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
@@ -200,54 +215,56 @@ const Chat = () => {
                   </div>
                 </div>
               </div>
-            </List.Item>
-          )}
-        />
-        <div ref={messagesEndRef} />
+            </div>
+          ))}
+          <div ref={messagesEndRef} />
+        </div>
       </main>
 
       {/* Панель смайликов */}
       {showEmojiPicker && (
         <div className="emoji-panel">
-          <Row gutter={[8, 8]}>
+          <div className="emoji-grid">
             {emojis.map((emoji, index) => (
-              <Col span={4} key={index}>
-                <Button 
-                  type="text" 
-                  onClick={() => handleSendSticker(emoji)}
-                  className="emoji-button"
-                >
-                  {emoji}
-                </Button>
-              </Col>
+              <button 
+                key={index}
+                type="button"
+                onClick={() => handleSendSticker(emoji)}
+                className="emoji-button"
+              >
+                {emoji}
+              </button>
             ))}
-          </Row>
+          </div>
         </div>
       )}
 
       {/* Панель ввода сообщения */}
       <footer className="chat-footer">
         <div className="message-input-container">
-          <Button
-            type="text"
-            icon={<SmileOutlined />}
-            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+          <button
+            type="button"
             className="emoji-toggle"
-          />
-          <Input
+            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+          >
+            😊
+          </button>
+          <input
+            type="text"
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
-            onPressEnter={handleSendMessage}
+            onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
             placeholder="Напишите сообщение..."
             className="message-input"
           />
-          <Button
-            type="primary"
-            icon={<SendOutlined />}
+          <button
+            type="button"
+            className="send-button"
             onClick={handleSendMessage}
             disabled={!inputMessage.trim()}
-            className="send-button"
-          />
+          >
+            Отправить
+          </button>
         </div>
       </footer>
     </div>
