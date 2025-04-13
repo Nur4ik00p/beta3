@@ -163,7 +163,7 @@ const Menu = () => {
             </Link>
           </div>
           <div className='menu-item'>
-            <Link to='/chat'>
+            <Link to="/chat">
               <BsChat className="menu-icon" />
               <span>Live Чаты</span>
             </Link>
