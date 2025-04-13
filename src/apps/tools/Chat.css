@@ -211,6 +211,9 @@
     padding: 12px 16px;
     background-color: #0D1116;
     border-top: solid 1px #31373F;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
   }
   
   .message-input-container {
