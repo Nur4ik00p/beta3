@@ -73,7 +73,7 @@ const Chat = () => {
     });
 
     // Загрузка истории сообщений
-    axios.get('http://localhost:4001/api/messages')
+    axios.get('https://atomglidedev.ru/api/messages')
       .then(response => {
         setMessages(response.data);
         scrollToBottom();
