@@ -25,6 +25,7 @@ import {
   BsCollectionPlayFill,
   BsCodeSlash,
   BsCommand,
+  BsChat,
   BsFillHeartFill,
 } from 'react-icons/bs';
 
@@ -159,6 +160,12 @@ const Menu = () => {
             <Link onClick={handleOpenFavorites}>
               <BsFillHeartFill className="menu-icon" />
               <span>Избранное</span>
+            </Link>
+          </div>
+          <div className='menu-item'>
+            <Link onClick={handleOpenFavorites}>
+              <BsChat className="menu-icon" />
+              <span>Live Чаты</span>
             </Link>
           </div>
           <div className='menu-item'>
