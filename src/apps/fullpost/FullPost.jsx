@@ -7,7 +7,8 @@ import styles from '../../style/post-fullview/FULLPOST.scss';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
-import { Prism } from 'prism-react-renderer';
+import { Prism as SyntaxHighlighter } from 'prism-react-renderer';
+import { themes } from 'prism-react-renderer'; // Add this import
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import ShareIcon from '@mui/icons-material/Share';
 import Button from '@mui/material/Button';
@@ -16,51 +17,26 @@ import Box from '@mui/material/Box';
 
 export const FullPost = () => {
   const [post, setPost] = React.useState(null);
-  const [randomPosts, setRandomPosts] = React.useState([]);
-  const [isLoading, setLoading] = React.useState(false);
+  const [isLoading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(null);
   const { id } = useParams();
   const navigate = useNavigate();
   const userData = useSelector(state => state.auth.data);
 
-  React.useEffect(() => {
-    document.body.classList.add(styles.bodyScroll);
-    return () => {
-      document.body.classList.remove(styles.bodyScroll);
-    };
-  }, []);
+  const processImageUrl = (url) => {
+    if (!url) return null;
+    
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    
+    const baseUrl = 'https://atomglidedev.ru';
+    return `${baseUrl}${url.startsWith('/') ? url : `/${url}`}`;
+  };
 
-  React.useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Загрузка только при первом рендере или изменении id
-        if (!post || post._id !== id) {
-          setLoading(true);
-          setError(null);
-          
-          const { data: postData } = await axios.get(`/posts/${id}`);
-          setPost(postData);
-          
-          try {
-            const { data: randomPostsData } = await axios.get('/posts/random?limit=3');
-            setRandomPosts(randomPostsData);
-          } catch (randomPostsError) {
-            console.error("Error fetching random posts:", randomPostsError);
-            setRandomPosts([]);
-          }
-        }
-      } catch (err) {
-        console.error("Error fetching post:", err);
-        setError(err.response?.data?.message || "Failed to load post");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [id, post]);
-
-  // Остальной код остается без изменений...
   const handleDownload = () => {
+    if (!post) return;
+    
     const element = document.createElement("a");
     const file = new Blob([post.text], {type: 'text/markdown'});
     element.href = URL.createObjectURL(file);
@@ -71,6 +47,8 @@ export const FullPost = () => {
   };
 
   const handleShare = () => {
+    if (!post) return;
+    
     if (navigator.share) {
       navigator.share({
         title: post.title,
@@ -84,15 +62,50 @@ export const FullPost = () => {
     }
   };
 
-  const tagsArray = post?.tags 
-    ? typeof post.tags === 'string' 
-      ? post.tags.split(',').map(tag => tag.trim()) 
-      : Array.isArray(post.tags) 
-        ? post.tags 
-        : []
-    : [];
+  React.useEffect(() => {
+    document.body.classList.add(styles.bodyScroll);
+    return () => {
+      document.body.classList.remove(styles.bodyScroll);
+    };
+  }, []);
 
-  if (isLoading && !post) {
+  React.useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const postResponse = await axios.get(`/posts/${id}`);
+        if (!postResponse.data) {
+          throw new Error('Пост не найден');
+        }
+        
+        const processedPost = {
+          ...postResponse.data,
+          imageUrl: processImageUrl(postResponse.data.imageUrl),
+          user: {
+            ...postResponse.data.user,
+            avatarUrl: processImageUrl(postResponse.data.user?.avatarUrl)
+          }
+        };
+        
+        setPost(processedPost);
+      } catch (err) {
+        console.error("Ошибка загрузки поста:", err);
+        setError(err.response?.data?.message || err.message || "Не удалось загрузить пост");
+        
+        if (err.response?.status === 404) {
+          setPost(null);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchPost();
+  }, [id]);
+
+  if (isLoading) {
     return (
       <Box sx={{ 
         display: 'flex', 
@@ -107,15 +120,30 @@ export const FullPost = () => {
 
   if (error) {
     return (
-      <div className="error-container">
-        <h3>Error loading post</h3>
-        <p>{error}</p>
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+        textAlign: 'center',
+        padding: '20px'
+      }}>
+        <h3 style={{ color: '#d32f2f', marginBottom: '20px' }}>Ошибка загрузки поста</h3>
+        <p style={{ marginBottom: '30px', maxWidth: '500px' }}>{error}</p>
         <Button 
           variant="contained" 
           onClick={() => navigate('/')}
-          className='github-button'
+          style={{
+            backgroundColor: '#1976d2',
+            color: 'white',
+            padding: '10px 20px',
+            borderRadius: '4px',
+            textTransform: 'none',
+            fontSize: '16px'
+          }}
         >
-          Go to homepage
+          Вернуться на главную
         </Button>
       </div>
     );
@@ -123,14 +151,29 @@ export const FullPost = () => {
 
   if (!post) {
     return (
-      <div className="not-found-container">
-        <h3>Post not found</h3>
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+        textAlign: 'center',
+        padding: '20px'
+      }}>
+        <h3 style={{ marginBottom: '20px' }}>Пост не найден</h3>
         <Button 
           variant="contained" 
           onClick={() => navigate('/')}
-          className='github-button'
+          style={{
+            backgroundColor: '#1976d2',
+            color: 'white',
+            padding: '10px 20px',
+            borderRadius: '4px',
+            textTransform: 'none',
+            fontSize: '16px'
+          }}
         >
-          Go to homepage
+          Вернуться на главную
         </Button>
       </div>
     );
@@ -143,7 +186,7 @@ export const FullPost = () => {
         imageUrl={post.imageUrl}
         title={post.title}
         text={post.text}
-        tags={tagsArray}
+        tags={post.tags}
         viewsCount={post.viewsCount}
         user={post.user}
         createdAt={post.createdAt}
@@ -151,59 +194,147 @@ export const FullPost = () => {
         likesCount={post.likes?.count || 0}
         dislikesCount={post.dislikes?.count || 0}
         userReaction={post.userReaction}
-        isFullPost
+        isFullPost={true}
+        isFavorite={post.isFavorite || false}
       />
       
-      {/* Остальной код рендеринга поста... */}
-      <div className='post-text-content'>
-        <div className='text-posta'>
-          <ReactMarkdown 
-            rehypePlugins={[rehypeRaw]}
-            remarkPlugins={[remarkGfm]}
-            className='markdown-content'
-            components={{
-              code({node, inline, className, children, ...props}) {
-                const match = /language-(\w+)/.exec(className || '');
-                return !inline && match ? (
-                  <Prism
-                    theme={Prism.themes.vscDarkPlus}
-                    language={match[1]}
-                    {...props}
-                  >
-                    {String(children).replace(/\n$/, '')}
-                  </Prism>
-                ) : (
-                  <code className="markdown-inline-code" {...props}>
-                    {children}
-                  </code>
-                );
-              },
-              strong: ({node, ...props}) => <strong className="markdown-strong" {...props} />,
-              em: ({node, ...props}) => <em className="markdown-em" {...props} />,
-              pre: ({node, ...props}) => <div className="markdown-pre-wrapper" {...props} />,
-              ul: ({node, ...props}) => <ul className="markdown-ul" {...props} />,
-              ol: ({node, ...props}) => <ol className="markdown-ol" {...props} />,
-              li: ({node, ...props}) => <li className="markdown-li" {...props} />,
-              h1: ({node, ...props}) => <h1 className="markdown-h1" {...props} />,
-              h2: ({node, ...props}) => <h2 className="markdown-h2" {...props} />,
-              h3: ({node, ...props}) => <h3 className="markdown-h3" {...props} />,
-              blockquote: ({node, ...props}) => <blockquote className="markdown-blockquote" {...props} />,
-              a: ({node, ...props}) => <a className="markdown-a" target="_blank" rel="noopener noreferrer" {...props} />,
-              table: ({node, ...props}) => <div className="markdown-table-container"><table className="markdown-table" {...props} /></div>,
-              img: ({node, ...props}) => <img className="markdown-img" style={{maxWidth: '100%'}} {...props} />,
-              hr: ({node, ...props}) => <hr className="markdown-hr" {...props} />,
-            }}
-          >
-            {post.text}
-          </ReactMarkdown>
-        </div>
+      <div className='post-text-content' style={{
+        margin: '20px',
+        padding: '20px',
+        backgroundColor: '#0D1116',
+        borderRadius: '8px',
+        border: '1px solid #31373F',
+        color: '#e1e1e1',
+        lineHeight: '1.6',
+        fontFamily: "'SF Pro Text', Arial, sans-serif"
+      }}>
+        <ReactMarkdown 
+          rehypePlugins={[rehypeRaw]}
+          remarkPlugins={[remarkGfm]}
+          components={{
+            code({node, inline, className, children, ...props}) {
+              const match = /language-(\w+)/.exec(className || '');
+              return !inline && match ? (
+                <SyntaxHighlighter
+                  children={String(children).replace(/\n$/, '')}
+                  language={match[1]}
+                  style={themes.vscDarkPlus} // Use the imported theme
+                  PreTag="div"
+                  {...props}
+                />
+              ) : (
+                <code className={className} {...props}>
+                  {children}
+                </code>
+              );
+            },
+            h1: ({node, ...props}) => <h1 style={{ 
+              color: '#fff', 
+              fontSize: '2em',
+              margin: '24px 0 16px 0',
+              fontWeight: '600'
+            }} {...props} />,
+            h2: ({node, ...props}) => <h2 style={{ 
+              color: '#fff', 
+              fontSize: '1.5em',
+              margin: '20px 0 14px 0',
+              fontWeight: '500'
+            }} {...props} />,
+            h3: ({node, ...props}) => <h3 style={{ 
+              color: '#fff', 
+              fontSize: '1.25em',
+              margin: '16px 0 12px 0',
+              fontWeight: '500'
+            }} {...props} />,
+            p: ({node, ...props}) => <p style={{ 
+              color: '#e1e1e1', 
+              margin: '16px 0', 
+              lineHeight: '1.6',
+              fontSize: '20px'
+            }} {...props} />,
+            a: ({node, ...props}) => <a style={{ 
+              color: '#18a3f9',
+              textDecoration: 'underline'
+            }} target="_blank" rel="noopener noreferrer" {...props} />,
+            img: ({node, ...props}) => (
+              <img 
+                style={{ 
+                  maxWidth: '100%', 
+                  borderRadius: '4px', 
+                  margin: '16px 0',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+                }} 
+                {...props} 
+                src={processImageUrl(props.src)}
+                onError={(e) => {
+                  e.target.src = 'https://via.placeholder.com/600x400?text=Image+not+found';
+                }}
+                loading="lazy"
+                alt="Изображение поста"
+              />
+            ),
+            blockquote: ({node, ...props}) => (
+              <blockquote style={{
+                borderLeft: '4px solid #18a3f9',
+                paddingLeft: '16px',
+                margin: '16px 0',
+                color: '#aaa',
+                fontStyle: 'italic'
+              }} {...props} />
+            ),
+            ul: ({node, ...props}) => <ul style={{ 
+              color: '#e1e1e1', 
+              paddingLeft: '24px',
+              margin: '16px 0'
+            }} {...props} />,
+            ol: ({node, ...props}) => <ol style={{ 
+              color: '#e1e1e1', 
+              paddingLeft: '24px',
+              margin: '16px 0'
+            }} {...props} />,
+            li: ({node, ...props}) => <li style={{ 
+              marginBottom: '8px',
+              fontSize: '16px'
+            }} {...props} />,
+            table: ({node, ...props}) => (
+              <div style={{ overflowX: 'auto', margin: '16px 0' }}>
+                <table style={{ 
+                  borderCollapse: 'collapse',
+                  width: '100%',
+                  border: '1px solid #31373F'
+                }} {...props} />
+              </div>
+            ),
+            th: ({node, ...props}) => <th style={{
+              border: '1px solid #31373F',
+              padding: '8px',
+              backgroundColor: '#151B23',
+              textAlign: 'left'
+            }} {...props} />,
+            td: ({node, ...props}) => <td style={{
+              border: '1px solid #31373F',
+              padding: '8px'
+            }} {...props} />,
+          }}
+        >
+          {post.text}
+        </ReactMarkdown>
         
-        <div className='post-actions'>
+        <div className='post-actions' style={{ 
+          marginTop: '30px',
+          display: 'flex',
+          gap: '10px'
+        }}>
           <Button 
             variant="contained" 
             startIcon={<FileDownloadIcon />}
             onClick={handleDownload}
-            className='github-button download-btn'
+            style={{
+              backgroundColor: '#4caf50',
+              color: 'white',
+              textTransform: 'none',
+              padding: '8px 16px'
+            }}
           >
             Скачать текст
           </Button>
@@ -211,34 +342,17 @@ export const FullPost = () => {
             variant="contained" 
             startIcon={<ShareIcon />}
             onClick={handleShare}
-            className='github-button share-btn'
+            style={{
+              backgroundColor: '#2196f3',
+              color: 'white',
+              textTransform: 'none',
+              padding: '8px 16px'
+            }}
           >
             Поделиться
           </Button>
         </div>
       </div>
-      
-      {randomPosts.length > 0 && (
-        <div className='recommended-posts'>
-          <h3 className='recommended-title'>Рекомендуемые посты</h3>
-          <div className='posts-grid'>
-            {randomPosts.map(randomPost => (
-              <Post
-                key={randomPost._id}
-                _id={randomPost._id}
-                imageUrl={randomPost.imageUrl}
-                title={randomPost.title}
-                text={randomPost.text.substring(0, 100) + '...'}
-                tags={Array.isArray(randomPost.tags) ? randomPost.tags : []}
-                viewsCount={randomPost.viewsCount}
-                user={randomPost.user}
-                createdAt={randomPost.createdAt}
-                isEditable={userData?._id === randomPost.user._id}
-              />
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 };
