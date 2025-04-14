@@ -20,7 +20,6 @@ import FormatQuote from '@mui/icons-material/FormatQuote';
 import FormatHeader1 from '@mui/icons-material/LooksOne';
 import FormatHeader2 from '@mui/icons-material/LooksTwo';
 import { Box, CircularProgress, Typography } from "@mui/material";
-
 import { Post } from '../post/post';
 import '../../style/work/work.scss';
 
@@ -30,7 +29,7 @@ const Work = () => {
   useEffect(() => {
     setModalMessage('Это бета тест 2 до вторика ');
     setOpenModal(true);
-  }, []); 
+  }, []);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -38,20 +37,19 @@ const Work = () => {
   const { posts, tags } = useSelector(state => state.posts);
   const userData = useSelector(state => state.auth.data);
   
-  // UI состояния
   const [activeTab, setActiveTab] = useState('home');
   const [isMounted, setIsMounted] = useState(false);
   const [showTextArea, setShowTextArea] = useState(false);
   const [showTagsInput, setShowTagsInput] = useState(false);
   const [showImageUpload, setShowImageUpload] = useState(false);
   
-  // Состояния формы
   const [isLoading, setLoading] = useState(false);
   const [text, setText] = useState('');
   const [title, setTitle] = useState('');
   const [postTags, setPostTags] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [isDragging, setIsDragging] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const inputFileRef = useRef(null);
   const textareaRef = useRef(null);
 
@@ -128,7 +126,7 @@ const Work = () => {
 
   const handleTagsClick = () => {
     setShowTagsInput(!showTagsInput);
-    setShowTextArea(false);
+    setShowTextArea(!showTextArea);
     setShowImageUpload(false);
   };
 
@@ -162,29 +160,36 @@ const Work = () => {
 
   const handleFileUpload = async (file) => {
     try {
-      if (!file.type.match('image.*')) {
-        throw new Error('Пожалуйста, выберите файл изображения');
+      const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+      if (!validTypes.includes(file.type)) {
+        throw new Error('Допустимые форматы: JPG, PNG, GIF, WebP');
       }
 
-      if (file.size > 5 * 1024 * 1024) {
-        throw new Error('Размер файла не должен превышать 5MB');
+      const maxSize = 20 * 1024 * 1024;
+      if (file.size > maxSize) {
+        throw new Error(`Файл слишком большой (макс. ${maxSize/1024/1024}MB)`);
       }
 
       setLoading(true);
+      setUploadProgress(0);
+
       const formData = new FormData();
       formData.append('image', file);
-      
+
       const { data } = await axios.post('/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          setUploadProgress(percentCompleted);
+        },
       });
 
-      if (data.url) {
-        setImageUrl(data.url);
-      } else {
-        throw new Error('URL изображения не получен от сервера');
-      }
+      if (!data.url) throw new Error('URL изображения не получен от сервера');
+      setImageUrl(data.url);
     } catch (err) {
       console.error('Ошибка при загрузке файла:', err);
       setModalMessage(err.message || 'Ошибка при загрузке файла!');
@@ -192,6 +197,7 @@ const Work = () => {
       setImageUrl('');
     } finally {
       setLoading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -271,8 +277,6 @@ const Work = () => {
 
   return (
     <div className="work-panel">
-
-
       {userData ? (
         <div className='panel-created'>
           <div className="posts-container">
@@ -281,12 +285,20 @@ const Work = () => {
               <input
                 type="text"
                 className="post-title-input"
-                placeholder="Заголовок поста*"
+                placeholder="Напиши заголовок поста"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 required
               />
-              
+              {showTagsInput && (
+                <input
+                  type="text"
+                  className="tags-input"
+                  placeholder="Сюда один тэг"
+                  value={postTags}
+                  onChange={(e) => setPostTags(e.target.value)}
+                />
+              )}
               {showTextArea && (
                 <div className="markdown-editor">
                   <div className="markdown-toolbar">
@@ -303,7 +315,7 @@ const Work = () => {
                   <textarea
                     ref={textareaRef}
                     className="post-textarea"
-                    placeholder="Введите текст поста (поддерживается Markdown)..."
+                    placeholder="Сюда текст поста (поддерживается Markdown)..."
                     value={text}
                     onChange={onChangeText}
                     rows={8}
@@ -315,15 +327,7 @@ const Work = () => {
                 </div>
               )}
               
-              {showTagsInput && (
-                <input
-                  type="text"
-                  className="tags-input"
-                  placeholder="Тэги (через запятую)"
-                  value={postTags}
-                  onChange={(e) => setPostTags(e.target.value)}
-                />
-              )}
+              
               
               {showImageUpload && (
                 <div 
@@ -344,12 +348,18 @@ const Work = () => {
                       <p className="upload-text">
                         {isDragging ? 'Отпустите для загрузки' : 'Перетащите изображение сюда или нажмите для выбора'}
                       </p>
+                      {uploadProgress > 0 && (
+                        <div className="upload-progress">
+                          <div className="progress-bar" style={{ width: `${uploadProgress}%` }} />
+                          <span>{uploadProgress}%</span>
+                        </div>
+                      )}
                       <input 
                         ref={inputFileRef} 
                         type="file" 
                         onChange={handleChangeFile} 
                         hidden 
-                        accept="image/*,.png,.jpg,.jpeg,.gif" 
+                        accept="image/*,.png,.jpg,.jpeg,.gif,.webp" 
                       />
                     </div>
                   ) : (
@@ -368,6 +378,10 @@ const Work = () => {
                         alt="Uploaded preview" 
                         className="preview-image"
                         onClick={(e) => e.stopPropagation()}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = '/default-image.png';
+                        }}
                       />
                     </div>
                   )}
@@ -383,13 +397,7 @@ const Work = () => {
                   >
                     <PhotoCamera />
                   </button>
-                  <button 
-                    className={`icon-button ${showTextArea ? 'active' : ''}`} 
-                    title="Текст"
-                    onClick={handleFileClick}
-                  >
-                    <InsertDriveFile />
-                  </button>
+            
                   <button 
                     className={`icon-button ${showTagsInput ? 'active' : ''}`} 
                     title="Теги"
@@ -409,6 +417,7 @@ const Work = () => {
               </div>
             </div>
             
+            {/* Остальная часть кода остается без изменений */}
             <div className={`DS2 animate-fade-in ${isMounted ? 'delay-2' : ''}`}>
               <div className="tab-slider">
                 <div className="tab-slider-container">
@@ -444,36 +453,34 @@ const Work = () => {
             </div>
 
             {isPostsLoading ? (
-              <>
-                           <Box
-     sx={{
-      position: "fixed",
-      top: 0,
-      left: 0,
-      width: "100vw",
-      height: "100vh",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center",
-      alignItems: "center",
-      backdropFilter: "blur(8px)",
-      backgroundColor: "rgba(34, 34, 73, 0.2)",
-      zIndex: 9999,
-    }}
-  >
-    <CircularProgress
-      size={60}
-      thickness={4}
-      sx={{
-        color: "white",
-        marginBottom: "20px",
-      }}
-    />
-    <Typography variant="h6" sx={{ color: "white", marginBottom: "10px" }}>
-      AtomGlide
-    </Typography>
-    </Box>
-              </>
+              <Box
+                sx={{
+                  position: "fixed",
+                  top: 0,
+                  left: 0,
+                  width: "100vw",
+                  height: "100vh",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backdropFilter: "blur(8px)",
+                  backgroundColor: "rgba(34, 34, 73, 0.2)",
+                  zIndex: 9999,
+                }}
+              >
+                <CircularProgress
+                  size={60}
+                  thickness={4}
+                  sx={{
+                    color: "white",
+                    marginBottom: "20px",
+                  }}
+                />
+                <Typography variant="h6" sx={{ color: "white", marginBottom: "10px" }}>
+                  AtomGlide
+                </Typography>
+              </Box>
             ) : activeTab === 'photo' ? (
               <div className="pinterest-grid">
                 {shuffledPosts.length > 0 ? (
@@ -491,6 +498,10 @@ const Work = () => {
                             alt={post.title}
                             className="pinterest-image"
                             loading="lazy"
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = '/default-image.png';
+                            }}
                           />
                           {post.title && (
                             <div className="image-overlay">
@@ -577,17 +588,40 @@ const Work = () => {
                   </div>
                 ))
             ) : (
-              <>
-    
-              </>
+              <Box
+                sx={{
+                  position: "fixed",
+                  top: 0,
+                  left: 0,
+                  width: "100vw",
+                  height: "100vh",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backdropFilter: "blur(8px)",
+                  backgroundColor: "rgba(34, 34, 73, 0.2)",
+                  zIndex: 9999,
+                }}
+              >
+                <CircularProgress
+                  size={60}
+                  thickness={4}
+                  sx={{
+                    color: "white",
+                    marginBottom: "20px",
+                  }}
+                />
+                <Typography variant="h6" sx={{ color: "white", marginBottom: "10px" }}>
+                  AtomGlide
+                </Typography>
+              </Box>
             )}
           </div>
         </div>
       ) : (
         <div className='panel-created'>
           <div className="posts-container">
-         
-            
             <div className={`DS2 animate-fade-in ${isMounted ? 'delay-2' : ''}`}>
               <div className="tab-slider">
                 <div className="tab-slider-container">
@@ -623,37 +657,34 @@ const Work = () => {
             </div>
 
             {isPostsLoading ? (
-              <>
-                          <Box
-      sx={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        backdropFilter: "blur(8px)",
-        backgroundColor: "rgba(34, 34, 73, 0.2)",
-        zIndex: 9999,
-      }}
-    >
-      <CircularProgress
-        size={60}
-        thickness={4}
-        sx={{
-          color: "white",
-          marginBottom: "20px",
-        }}
-      />
-      <Typography variant="h6" sx={{ color: "white", marginBottom: "10px" }}>
-        AtomGlide
-      </Typography>
-
-    </Box>
-              </>
+              <Box
+                sx={{
+                  position: "fixed",
+                  top: 0,
+                  left: 0,
+                  width: "100vw",
+                  height: "100vh",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backdropFilter: "blur(8px)",
+                  backgroundColor: "rgba(34, 34, 73, 0.2)",
+                  zIndex: 9999,
+                }}
+              >
+                <CircularProgress
+                  size={60}
+                  thickness={4}
+                  sx={{
+                    color: "white",
+                    marginBottom: "20px",
+                  }}
+                />
+                <Typography variant="h6" sx={{ color: "white", marginBottom: "10px" }}>
+                  AtomGlide
+                </Typography>
+              </Box>
             ) : activeTab === 'photo' ? (
               <div className="pinterest-grid">
                 {shuffledPosts.length > 0 ? (
@@ -671,6 +702,10 @@ const Work = () => {
                             alt={post.title}
                             className="pinterest-image"
                             loading="lazy"
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = '/default-image.png';
+                            }}
                           />
                           {post.title && (
                             <div className="image-overlay">
@@ -693,9 +728,8 @@ const Work = () => {
                 <div className="news-updates">
                   <div className="update-item">
                     <span className="update-date">11.04.2025</span>
-                    <p className="update-text">Бета тест 3 </p>
+                    <p className="update-text">Бета тест 3</p>
                   </div>
-
                 </div>
 
                 <h2 className="news-title">Важные объявления</h2>
@@ -751,36 +785,34 @@ const Work = () => {
                   </div>
                 ))
             ) : (
-              <>
-                           <Box
-      sx={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        backdropFilter: "blur(8px)",
-        backgroundColor: "rgba(34, 34, 73, 0.2)",
-        zIndex: 9999,
-      }}
-    >
-      <CircularProgress
-        size={60}
-        thickness={4}
-        sx={{
-          color: "white",
-          marginBottom: "20px",
-        }}
-      />
-      <Typography variant="h6" sx={{ color: "white", marginBottom: "10px" }}>
-        AtomGlide
-      </Typography>
-    </Box>
-              </>
+              <Box
+                sx={{
+                  position: "fixed",
+                  top: 0,
+                  left: 0,
+                  width: "100vw",
+                  height: "100vh",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backdropFilter: "blur(8px)",
+                  backgroundColor: "rgba(34, 34, 73, 0.2)",
+                  zIndex: 9999,
+                }}
+              >
+                <CircularProgress
+                  size={60}
+                  thickness={4}
+                  sx={{
+                    color: "white",
+                    marginBottom: "20px",
+                  }}
+                />
+                <Typography variant="h6" sx={{ color: "white", marginBottom: "10px" }}>
+                  AtomGlide
+                </Typography>
+              </Box>
             )}
           </div>
         </div>
@@ -796,7 +828,7 @@ const Work = () => {
                 <div 
                   key={user._id} 
                   className="following-user"
-                  onClick={() => navigate(user.profileUrl || `/account/profile/${user._id}`)}
+                  onClick={() => navigate(user.profileUrl || `/users/${user._id}`)}
                 >
                   <img 
                     src={user.avatarUrl ? `https://atomglidedev.ru${user.avatarUrl}` : '/default-avatar.png'} 
