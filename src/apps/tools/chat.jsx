@@ -1,21 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
-import axios from 'axios';
 import './Chat.css';
 
-const emojis = ['😀', '😂', '😍', '👍', '❤️', '🔥', '🎉', '🤔', '😎', '🥳'];
+const emojis = [
+  '😀', '😂', '😍', '😊', '😎', '😜', '🤩', '🥳', '😇', '🤪',
+  '😘', '🥰', '😋', '🤗', '🤔', '😏', '😒', '😞', '😢', '😠',
+  '😳', '🤯', '😱', '🤢', '😴', '😈', '👻', '💩', '🤡', '👽',
+  '👍', '👎', '❤️', '🔥', '🎉', '💯', '✨', '🌟', '🙏', '🤝',
+  '👏', '🙈', '🙉', '🙊', '💋', '💔', '💖', '💘', '💝', '💤'
+];
 
 const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
-  const [onlineUsers, setOnlineUsers] = useState({ count: 0, users: [] });
   const [userName, setUserName] = useState('');
   const [avatarColor, setAvatarColor] = useState('');
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(true);
   const [connectionStatus, setConnectionStatus] = useState('disconnected');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const socket = useRef();
   const messagesEndRef = useRef(null);
+  const chatMainRef = useRef(null);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     const savedName = localStorage.getItem('chatUsername');
@@ -25,8 +31,7 @@ const Chat = () => {
       setUserName(savedName);
       setAvatarColor(savedColor);
       connectToServer(savedName, savedColor);
-    } else {
-      setIsModalVisible(true);
+      setIsModalVisible(false);
     }
 
     return () => {
@@ -34,12 +39,17 @@ const Chat = () => {
     };
   }, []);
 
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, showEmojiPicker]);
+
   const connectToServer = (name, color) => {
     setConnectionStatus('connecting');
     
     socket.current = io('https://atomglidedev.ru', {
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,
+      transports: ['websocket']
     });
 
     socket.current.on('connect', () => {
@@ -58,32 +68,19 @@ const Chat = () => {
       setConnectionStatus('error');
     });
 
-    socket.current.on('onlineUsers', (data) => {
-      setOnlineUsers(data);
-    });
-
     socket.current.on('messageHistory', (history) => {
       setMessages(history);
-      scrollToBottom();
     });
 
     socket.current.on('receiveMessage', (newMessage) => {
       setMessages(prev => [...prev, newMessage]);
-      scrollToBottom();
     });
-
-    // Загрузка истории сообщений
-    axios.get('https://atomglidedev.ru/api/messages')
-      .then(response => {
-        setMessages(response.data);
-        scrollToBottom();
-      })
-      .catch(err => {
-        console.error('Error loading messages:', err);
-      });
   };
 
-  const handleUserRegistration = (name, color) => {
+  const handleUserRegistration = () => {
+    const name = userName || 'Аноним';
+    const color = avatarColor || `#${Math.floor(Math.random()*16777215).toString(16)}`;
+    
     setUserName(name);
     setAvatarColor(color);
     localStorage.setItem('chatUsername', name);
@@ -94,7 +91,14 @@ const Chat = () => {
   };
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (chatMainRef.current) {
+      setTimeout(() => {
+        chatMainRef.current.scrollTo({
+          top: chatMainRef.current.scrollHeight,
+          behavior: 'smooth'
+        });
+      }, 100);
+    }
   };
 
   const handleSendMessage = () => {
@@ -107,6 +111,7 @@ const Chat = () => {
       });
       setInputMessage('');
       setShowEmojiPicker(false);
+      inputRef.current.focus();
     }
   };
 
@@ -118,34 +123,14 @@ const Chat = () => {
       isSticker: true
     });
     setShowEmojiPicker(false);
+    inputRef.current.focus();
   };
 
-  const getStatusColor = () => {
-    switch(connectionStatus) {
-      case 'connected': return '#52c41a';
-      case 'connecting': return '#faad14';
-      case 'error': return '#f5222d';
-      default: return '#d9d9d9';
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
     }
-  };
-
-  const getStatusText = () => {
-    switch(connectionStatus) {
-      case 'connected': return 'онлайн';
-      case 'connecting': return 'подключение...';
-      case 'error': return 'ошибка подключения';
-      default: return 'офлайн';
-    }
-  };
-
-  const UserAvatar = ({ color }) => {
-    return (
-      <div className="user-avatar" style={{ backgroundColor: color }}>
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="#fff">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
-        </svg>
-      </div>
-    );
   };
 
   return (
@@ -155,22 +140,20 @@ const Chat = () => {
         <div className="modal-overlay">
           <div className="modal">
             <div className="modal-header">
-              <h3>Подключение к чату</h3>
+              <h2>Подключение к чату</h2>
             </div>
             <div className="modal-body">
               <div className="connection-form">
                 <input
                   type="text"
                   placeholder="Введите ваше имя"
-                  onChange={(e) => setUserName(e.target.value)}
                   className="name-input"
+                  value={userName}
+                  onChange={(e) => setUserName(e.target.value)}
                 />
                 <button 
                   className="connect-button"
-                  onClick={() => handleUserRegistration(
-                    userName || 'Аноним', 
-                    `#${Math.floor(Math.random()*16777215).toString(16)}`
-                  )}
+                  onClick={handleUserRegistration}
                 >
                   Подключиться
                 </button>
@@ -184,24 +167,33 @@ const Chat = () => {
       <header className="chat-header">
         <div className="header-content">
           <div className="chat-title">
-            <span>Чат сообщества</span>
-            <span className="connection-status" style={{ color: getStatusColor() }}>
-              {getStatusText()}
+            Чат сообщества
+            <span className="connection-status" style={{ 
+              color: connectionStatus === 'connected' ? '#52c41a' : 
+                     connectionStatus === 'connecting' ? '#faad14' : 
+                     connectionStatus === 'error' ? '#f5222d' : '#d9d9d9'
+            }}>
+              {connectionStatus === 'connected' ? ' онлайн' : ' офлайн'}
             </span>
           </div>
         </div>
       </header>
 
       {/* Основное содержимое чата */}
-      <main className="chat-main">
+      <main className="chat-main" ref={chatMainRef}>
         <div className="messages-list">
           {messages.map((item, index) => (
             <div key={index} className={`message-item ${item.isSticker ? 'sticker-message' : ''}`}>
               <div className="message-content">
-                <UserAvatar color={item.avatarColor} />
+                <div 
+                  className="user-avatar" 
+                  style={{ backgroundColor: item.avatarColor }}
+                >
+                  {item.user ? item.user.charAt(0).toUpperCase() : 'A'}
+                </div>
                 <div className="message-text">
                   <div className="message-meta">
-                    <span className="message-user">{item.userName}</span>
+                    <span className="message-user">{item.user || 'Аноним'}</span>
                     <span className="message-time">
                       {new Date(item.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
@@ -221,16 +213,15 @@ const Chat = () => {
         </div>
       </main>
 
-      {/* Панель смайликов */}
+      {/* Плавающая панель смайликов */}
       {showEmojiPicker && (
-        <div className="emoji-panel">
+        <div className="emoji-panel floating">
           <div className="emoji-grid">
             {emojis.map((emoji, index) => (
-              <button 
+              <button
                 key={index}
-                type="button"
-                onClick={() => handleSendSticker(emoji)}
                 className="emoji-button"
+                onClick={() => handleSendSticker(emoji)}
               >
                 {emoji}
               </button>
@@ -243,27 +234,26 @@ const Chat = () => {
       <footer className="chat-footer">
         <div className="message-input-container">
           <button
-            type="button"
             className="emoji-toggle"
             onClick={() => setShowEmojiPicker(!showEmojiPicker)}
           >
             😊
           </button>
           <input
+            ref={inputRef}
             type="text"
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+            onKeyPress={handleKeyPress}
             placeholder="Напишите сообщение..."
             className="message-input"
           />
           <button
-            type="button"
             className="send-button"
             onClick={handleSendMessage}
             disabled={!inputMessage.trim()}
           >
-            Отправить
+            Отпр.
           </button>
         </div>
       </footer>
