@@ -5,7 +5,7 @@ const Header = () => {
   return (
     <header className="panel-center">
       <div className="panel">
-        <Link to="/" className="panel-text">AtomGlide</Link>  
+        <Link to="/" className="panel-text">Soon-Night</Link>  
       </div>
     </header>
   );
