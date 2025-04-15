@@ -1,6 +1,6 @@
 import axios from "axios";
 const instance = axios.create({
-    baseURL: 'http://node.soon-night.lol'  // Добавлен слеш в конце
+    baseURL: 'https://node.soon-night.lol'  // Добавлен слеш в конце
 });
 
 instance.interceptors.request.use((config) => {
