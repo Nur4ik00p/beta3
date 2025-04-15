@@ -136,7 +136,7 @@ const Menu = () => {
       <main className='menu-profile'>
         <Avatar 
           alt='' 
-          src={user.avatarUrl ? `https://atomglidedev.ru${user.avatarUrl}` : image} 
+          src={user.avatarUrl ? `https://node.soon-night.lol${user.avatarUrl}` : image} 
           sx={{ width: 60, height: 60 }} 
           className='pro-avtr-o' 
         />
@@ -241,14 +241,14 @@ const Menu = () => {
                     <UserInfo 
                       {...post.user} 
                       additionalText={new Date(post.createdAt).toLocaleDateString()}
-                      avatarUrl={post.user?.avatarUrl ? `https://atomglidedev.ru${post.user.avatarUrl}` : ''}
+                      avatarUrl={post.user?.avatarUrl ? `https://node.soon-night.lol${post.user.avatarUrl}` : ''}
                     />
                     
                     <h3 style={{ color: '#f0f6fc', margin: '10px 0' }}>{post.title}</h3>
                     
                     {post.imageUrl && (
                       <img 
-                        src={`https://atomglidedev.ru${post.imageUrl}`} 
+                        src={`https://node.soon-night.lol${post.imageUrl}`} 
                         alt={post.title}
                         style={{
                           width: '100%',
