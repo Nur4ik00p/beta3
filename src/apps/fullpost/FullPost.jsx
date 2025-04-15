@@ -30,7 +30,7 @@ export const FullPost = () => {
       return url;
     }
     
-    const baseUrl = 'https://atomglidedev.ru';
+    const baseUrl = 'https://node.soon-night.lol';
     return `${baseUrl}${url.startsWith('/') ? url : `/${url}`}`;
   };
 
