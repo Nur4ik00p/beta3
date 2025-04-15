@@ -46,7 +46,7 @@ const Chat = () => {
   const connectToServer = (name, color) => {
     setConnectionStatus('connecting');
     
-    socket.current = io('https://atomglidedev.ru', {
+    socket.current = io('https://node.soon-night.lol', {
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,
       transports: ['websocket']
