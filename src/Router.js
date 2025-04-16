@@ -1,4 +1,5 @@
 import React from 'react';
+import PrivateChat from './apps/tools/PrivateChat';
 import { Routes, Route } from 'react-router-dom';
 import Header from './apps/header/header';
 import Menu from './apps/menu/Menu';
@@ -46,6 +47,7 @@ const AppRouter = () => {
         <Route path="/admin" element={<AdminPanel />} />
         <Route path="/dock" element={<Dock />} />
         <Route path="/apps/atomform" element={<SurveyForm />} />
+        <Route path="/private-chat" element={<PrivateChat />} />
 
 
         {/* Маршруты с хедером */}
