@@ -116,7 +116,7 @@ export const Mobile = () => {
       <Link to={`/account/profile/${user._id}`}>
         <Avatar 
           alt='' 
-          src={user.avatarUrl ? `https://node.soon-night.lol${user.avatarUrl}` : image} 
+          src={user.avatarUrl ? `http://demo.soon-night.lol${user.avatarUrl}` : image} 
           sx={{ width: 25, height: 25 }} 
           className='pro-avtr-o-io' 
         />
@@ -184,14 +184,14 @@ export const Mobile = () => {
                     <UserInfo 
                       {...post.user} 
                       additionalText={new Date(post.createdAt).toLocaleDateString()}
-                      avatarUrl={post.user?.avatarUrl ? `https://node.soon-night.lol${post.user.avatarUrl}` : ''}
+                      avatarUrl={post.user?.avatarUrl ? `http://demo.soon-night.lol${post.user.avatarUrl}` : ''}
                     />
                     
                     <h3 style={{ color: '#f0f6fc', margin: '10px 0' }}>{post.title}</h3>
                     
                     {post.imageUrl && (
                       <img 
-                        src={`https://node.soon-night.lol${post.imageUrl}`} 
+                        src={`http://demo.soon-night.lol${post.imageUrl}`} 
                         alt={post.title}
                         style={{
                           width: '100%',

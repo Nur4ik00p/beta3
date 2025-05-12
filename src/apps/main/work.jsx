@@ -374,7 +374,7 @@ const Work = () => {
                         Удалить
                       </button>
                       <img 
-                        src={`https://node.soon-night.lol${imageUrl}`} 
+                        src={`http://demo.soon-night.lol${imageUrl}`} 
                         alt="Uploaded preview" 
                         className="preview-image"
                         onClick={(e) => e.stopPropagation()}
@@ -494,7 +494,7 @@ const Work = () => {
                       {post.imageUrl && (
                         <>
                           <img
-                            src={`https://node.soon-night.lol${post.imageUrl}`}
+                            src={`http://demo.soon-night.lol${post.imageUrl}`}
                             alt={post.title}
                             className="pinterest-image"
                             loading="lazy"
@@ -698,7 +698,7 @@ const Work = () => {
                       {post.imageUrl && (
                         <>
                           <img
-                            src={`https://node.soon-night.lol${post.imageUrl}`}
+                            src={`http://demo.soon-night.lol${post.imageUrl}`}
                             alt={post.title}
                             className="pinterest-image"
                             loading="lazy"
@@ -831,7 +831,7 @@ const Work = () => {
                   onClick={() => navigate(user.profileUrl || `/users/${user._id}`)}
                 >
                   <img 
-                    src={user.avatarUrl ? `https://node.soon-night.lol${user.avatarUrl}` : '/default-avatar.png'} 
+                    src={user.avatarUrl ? `http://demo.soon-night.lol${user.avatarUrl}` : '/default-avatar.png'} 
                     alt={user.fullName} 
                     className="following-avatar"
                     onError={(e) => {

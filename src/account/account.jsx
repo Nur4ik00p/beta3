@@ -47,14 +47,14 @@ const Profile = () => {
   const getAvatarUrl = (avatarPath) => {
     if (!avatarPath) return '/default-avatar.jpg';
     const cleanPath = avatarPath.replace(/^\/uploads\//, '');
-    const baseUrl = 'https://node.soon-night.lol';
+    const baseUrl = 'http://demo.soon-night.lol';
     return `${baseUrl}/uploads/${cleanPath}`;
   };
 
   const getCoverUrl = (coverPath) => {
     if (!coverPath) return null;
     const cleanPath = coverPath.replace(/^\/uploads\//, '');
-    const baseUrl = 'https://node.soon-night.lol';
+    const baseUrl = 'http://demo.soon-night.lol';
     return `${baseUrl}/uploads/${cleanPath}`;
   };
 

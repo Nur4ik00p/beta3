@@ -30,7 +30,7 @@ export const FullPost = () => {
       return url;
     }
     
-    const baseUrl = 'https://node.soon-night.lol';
+    const baseUrl = 'http://demo.soon-night.lol';
     return `${baseUrl}${url.startsWith('/') ? url : `/${url}`}`;
   };
 
